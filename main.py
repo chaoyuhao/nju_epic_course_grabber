@@ -22,6 +22,9 @@ pause_lowb = 5.0
 pause_upb  = 20.0
 loop_lock  = threading.Lock()
 crt_flag   = False
+batch_n    = 0
+success_list = []
+
 
 def load():
     print("正在加载网页")
@@ -71,8 +74,9 @@ def reload():
 
 def batch_select():
     while True:
+        global batch_n
         if page1.ele('.jqx-rc-all jqx-window jqx-popup jqx-widget jqx-widget-content'):
-            page1.eles('.cv-electiveBatch-select')[-1].click()
+            page1.eles('.cv-electiveBatch-select')[batch_n-1].click()
             page1.ele("确认").click()
             page1.ele('#courseBtn').click()
             page1.eles('.tab-first')[-1].click()
@@ -139,6 +143,7 @@ def t_loop():
                 assert 0
             for wanted_course in wanted_courses:
                 print(wanted_course('.kcmc course-cell').text, wanted_course('.jsmc course-cell').text, wanted_course('.yxrs course-cell').text)
+                course_name = wanted_course('.kcmc course-cell').text
                 statue = wanted_course('.yxrs course-cell').text
                 if '已满' in statue:
                     print("已满，尝试刷新")
@@ -155,6 +160,7 @@ def t_loop():
                         else:
                             dialog.next().click()
                             print(f"{wanted_course.texts()}选课成功") 
+                            success_list.append(course_name)
                             assert 0
         except:
             try:
@@ -219,20 +225,20 @@ class LoginFrame(wx.Frame):
         
         self.qkw = threading.Thread(target=wx_wrapper)
         
-        self.lable_id   = wx.StaticText(panel, label="学号", pos=(20, 20))
+        self.lable_id   = wx.StaticText(panel, label="学号", pos=(20, 25))
         self.input_id   = wx.TextCtrl(panel, pos=(20, 50), size=(150, -1))
-        self.label_pwd  = wx.StaticText(panel, label="密码", pos=(20, 80))
+        self.label_pwd  = wx.StaticText(panel, label="密码", pos=(20, 85))
         self.input_pwd  = wx.TextCtrl(panel, pos=(20, 110), size=(150, -1), style=wx.TE_PASSWORD)
-        self.label3     = wx.StaticText(panel, label="帅哥", pos=(20, 140))
+        self.label3     = wx.StaticText(panel, label="帅哥", pos=(20, 145))
         self.text_ctrl3 = wx.TextCtrl(panel, pos=(20, 170), size=(150, -1))
-        self.label3     = wx.StaticText(panel, label="不要碰那个蹦出来的chrome浏览器", pos=(20, 200))
+        self.label_batch= wx.StaticText(panel, label="批次", pos=(200, 25))
+        self.input_batch= wx.TextCtrl(panel, pos=(200, 50), size=(70, -1))
+        self.label4     = wx.StaticText(panel, label="不要碰那个蹦出来的chrome浏览器", pos=(20, 210))
         
-        # 创建提交按钮
-        submit_button = wx.Button(panel, label="Login", pos=(200, 100))
+        submit_button = wx.Button(panel, label="Login", pos=(200, 110))
         submit_button.Bind(wx.EVT_BUTTON, self.on_submit)
-        exit_button = wx.Button(panel, label="quit", pos = (200, 160))
+        exit_button = wx.Button(panel, label="quit", pos = (200, 170))
         exit_button.Bind(wx.EVT_BUTTON, self.on_quit)
-        # 设置窗口大小和标题
         self.SetSize((400, 300))
         self.SetTitle("NJU传奇抢课王 - Login")
 
@@ -243,12 +249,12 @@ class LoginFrame(wx.Frame):
         exit(0)
 
     def on_submit(self, event):
-        # 获取输入框中的值
         print("on submit")
         self.Hide()
-        global login_name, login_pwd, loop_lock, loop_flag, crt_flag
+        global login_name, login_pwd, loop_lock, loop_flag, crt_flag, batch_n
         login_name = self.input_id.GetValue()
-        login_pwd = self.input_pwd.GetValue()
+        login_pwd  = self.input_pwd.GetValue()
+        batch_n    = int(self.input_batch.GetValue())
         if self.text_ctrl3.GetValue() != "cyh": exit(0)
         with loop_lock:
             loop_flag = True
@@ -264,29 +270,60 @@ class SecondFrame(wx.Frame):
         super(SecondFrame, self).__init__(*args, **kw)
         
         panel = wx.Panel(self)
-        label = wx.StaticText(panel, label="控制台", pos=(50, 50))
-        self.text_ctrl = wx.TextCtrl(panel, pos=(50, 70), size=(300, 250), style=wx.TE_MULTILINE | wx.TE_READONLY)
+        self.Bind(wx.EVT_CLOSE, self.on_close)
+
+        label = wx.StaticText(panel, label="控制台", pos=(30, 50))
+        self.text_ctrl = wx.TextCtrl(panel, pos=(30, 70), size=(300, 250), style=wx.TE_MULTILINE | wx.TE_READONLY)
         redir = RedirectText(self.text_ctrl)
         sys.stdout = redir
 
         
-        self.label_upb  = wx.StaticText(panel, label="随机时间分布(秒)", pos=(20, 20))
-        self.input_lowb = wx.TextCtrl(panel, pos=(170, 20), size=(50, -1))
+        self.label_upb  = wx.StaticText(panel, label="随机时间分布(输入小数)(秒)", pos=(30, 23))
+        self.input_lowb = wx.TextCtrl(panel, pos=(180, 20), size=(50, -1))
         self.input_upb  = wx.TextCtrl(panel, pos=(250, 20), size=(50, -1))
 
-        self.back_button = wx.Button(panel, label="quit", pos=(380, 200))
-        self.back_button.Bind(wx.EVT_BUTTON, self.on_quit)
+        global success_list
 
-        self.pause_button = wx.Button(panel, label="暂停/继续", pos=(380, 120))
+        # 创建 wx.ListBox 或 wx.TextCtrl 控件
+        # self.list_box = wx.ListBox(panel, size=(100, 50), choices=success_list)
+        self.text_ctrl = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(100, 50))
+
+        # 布局
+        # self.list_box.SetPosition((365, 20))  # 设置 ListBox 的位置
+        # self.list_box.SetSize((100, 50))    # 设置 ListBox 的大小
+
+        self.succ_info  = wx.StaticText(panel, label="当前抢课成果", pos=(365, 15))
+        self.text_ctrl.SetPosition((365, 30))  # 设置 TextCtrl 的位置
+        self.text_ctrl.SetSize((100, 130))     # 设置 TextCtrl 的大小
+
+        # 绑定定时器用于实时更新
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.update_suc_display, self.timer)
+        self.timer.Start(3000)  # 每秒钟更新一次
+
+        self.pause_button = wx.Button(panel, label="暂停/继续", pos=(365, 190))
         self.pause_button.Bind(wx.EVT_BUTTON, self.on_pause)
 
-        self.mode_button = wx.Button(panel, label="切换抢课模式", pos=(380, 160))
+        self.mode_button = wx.Button(panel, label="开启/关闭延时刷新", pos=(365, 230))
         self.mode_button.Bind(wx.EVT_BUTTON, self.on_switch_mode)
         
+        self.back_button = wx.Button(panel, label="quit", pos=(365, 270))
+        self.back_button.Bind(wx.EVT_BUTTON, self.on_quit)
+
         self.parent = parent
         
-        self.SetSize((500, 400))
+        self.SetSize((520, 400))
     
+    def update_suc_display(self, event):
+        global success_list
+        if success_list:
+            # 如果列表不为空，显示列表内容
+            # self.list_box.Set(success_list)
+            self.text_ctrl.SetValue("\n".join(success_list))
+        else:
+            # self.list_box.Set(["革命尚未成功,同志仍需努力"])
+            self.text_ctrl.SetValue("革命尚未成功,同志仍需努力")
+
     def on_switch_mode(self, event):
         global loop_lock, pause_flag, pause_lowb, pause_upb
         print("等待时间方法切换")
@@ -294,7 +331,7 @@ class SecondFrame(wx.Frame):
             print("获取锁")
             if pause_flag: print("切换到急速刷新模式，比较狂野ᕙ༼ຈ ͜ຈ༽ᕗ")
             else: 
-                time.sleep(0.5)
+                time.sleep(1)
                 print("切换到随机时间刷新模式，比较温柔(*´▽`*)❀")
                 pause_lowb = float(self.input_lowb.GetValue())
                 pause_upb  = float(self.input_upb.GetValue())
@@ -317,6 +354,11 @@ class SecondFrame(wx.Frame):
             page1.close()
             exit(0)
 
+    def on_close(self, event):
+        global page1
+        page1.close()
+        self.Close()
+        exit(0)
 
 if __name__ == '__main__':
     app = wx.App(False)
