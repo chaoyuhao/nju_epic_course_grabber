@@ -1,4 +1,4 @@
-# NJU Course Selector
+# NJU Epic Course Grabber
 
 ## 简介
 
