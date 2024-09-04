@@ -71,7 +71,6 @@ def reload():
     page1.eles('.tab-first')[-1].click()
 
 
-
 def batch_select():
     while True:
         global batch_n
@@ -233,6 +232,7 @@ class LoginFrame(wx.Frame):
         self.text_ctrl3 = wx.TextCtrl(panel, pos=(20, 170), size=(150, -1))
         self.label_batch= wx.StaticText(panel, label="批次", pos=(200, 25))
         self.input_batch= wx.TextCtrl(panel, pos=(200, 50), size=(70, -1))
+        
         self.label4     = wx.StaticText(panel, label="不要碰那个蹦出来的chrome浏览器", pos=(20, 210))
         
         submit_button = wx.Button(panel, label="Login", pos=(200, 110))
@@ -294,6 +294,8 @@ class SecondFrame(wx.Frame):
         # 布局
         # self.list_box.SetPosition((365, 20))  # 设置 ListBox 的位置
         # self.list_box.SetSize((100, 50))    # 设置 ListBox 的大小
+        self.label4     = wx.StaticText(panel, label="如果这个软件真的帮你选到了那个你很喜欢的课，不妨请作者一杯奶茶", pos=(30, 325))
+        self.label4     = wx.StaticText(panel, label="zfb: 15650712188", pos=(30, 340))
 
         self.succ_info  = wx.StaticText(panel, label="当前抢课成果", pos=(365, 15))
         self.text_ctrl.SetPosition((365, 30))  # 设置 TextCtrl 的位置
