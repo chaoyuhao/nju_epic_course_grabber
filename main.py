@@ -24,9 +24,11 @@ loop_lock  = threading.Lock()
 crt_flag   = False
 batch_n    = 0
 success_list = []
+session = requests.Session()
 
 
 def load():
+    global session
     print("正在加载网页")
     page1.refresh()
     time.sleep(1.5)
@@ -35,7 +37,6 @@ def load():
     #     page1.ele('#courseBtn').click()
     #     page1.eles('.tab-first')[-1].click()
     #     return
-    session = requests.Session()
     verifyCodeDiv = page1.ele('#verifyCodeDiv')
     pic = verifyCodeDiv.ele('tag:img')
     print(pic)
@@ -294,8 +295,10 @@ class SecondFrame(wx.Frame):
         # 布局
         # self.list_box.SetPosition((365, 20))  # 设置 ListBox 的位置
         # self.list_box.SetSize((100, 50))    # 设置 ListBox 的大小
-        self.label4     = wx.StaticText(panel, label="如果这个软件真的帮你选到了那个你很喜欢的课，不妨请作者一杯奶茶", pos=(30, 325))
-        self.label4     = wx.StaticText(panel, label="zfb: 15650712188", pos=(30, 340))
+        self.label4     = wx.StaticText(panel, label="验证码可能识别错误，请耐心等待", pos=(30, 325))
+        self.label4     = wx.StaticText(panel, label="如果显示账号密码不对，说明你之前输错了，请你关掉软件重新登陆", pos=(30, 340))
+        self.label4     = wx.StaticText(panel, label="如果这个软件真的帮你选到了那个你很喜欢的课，不妨请作者一杯奶茶", pos=(30, 355))
+        self.label4     = wx.StaticText(panel, label="zfb: 15650712188", pos=(30, 370))
 
         self.succ_info  = wx.StaticText(panel, label="当前抢课成果", pos=(365, 15))
         self.text_ctrl.SetPosition((365, 30))  # 设置 TextCtrl 的位置
@@ -317,7 +320,7 @@ class SecondFrame(wx.Frame):
 
         self.parent = parent
         
-        self.SetSize((520, 400))
+        self.SetSize((520, 430))
     
     def update_suc_display(self, event):
         global success_list
@@ -353,16 +356,18 @@ class SecondFrame(wx.Frame):
             loop_flag = not loop_flag
 
     def on_quit(self, event):
-        global page1
+        global page1, session
         with loop_lock:
             self.Close()
+            session.close()
             page1.close()
             exit(0)
 
     def on_close(self, event):
-        global page1
-        page1.close()
+        global page1, session
         self.Close()
+        session.close()
+        page1.close()
         exit(0)
 
 if __name__ == '__main__':
