@@ -254,10 +254,10 @@ class LoginFrame(wx.Frame):
         global login_name, login_pwd, loop_lock, loop_flag, crt_flag, batch_n
         login_name = self.input_id.GetValue()
         login_pwd  = self.input_pwd.GetValue()
-        if self.input_batch.strip():
+        if self.input_batch.GetValue():
             batch_n    = int(self.input_batch.GetValue())
         else: 
-            batch_n    = -1
+            batch_n    = 0
         # if self.text_ctrl3.GetValue() != "cyh": exit(0)
         with loop_lock:
             loop_flag = True
