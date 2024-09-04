@@ -2,7 +2,7 @@
 
 ## 简介
 
-NJU Course Selector 是一个自动选课工具，基于DrissionPage框架。这个基于Python的应用程序通过自动检测并选择收藏列表中有空位的课程，简化了选课流程。
+NJU Epic Course Grabber 是一个自动选课工具，基于DrissionPage框架。这个基于Python的应用程序通过自动检测并选择收藏列表中有空位的课程，简化了选课流程。
 
 fork作者留言：传奇抢课王在`NJU Course Selector`的基础上做了简单的图形化界面，并提供了打包的release版本，提高了自动化水平以及该脚本对打开浏览器进行抢课的执念()，对非cs相关专业的同学更为友好，作者预计将维护该分支直到`25fall`。
 
