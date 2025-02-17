@@ -81,6 +81,10 @@ def batch_select():
             page1.ele('#courseBtn').click()
             page1.eles('.tab-first')[-1].click()
             break
+        elif page1.ele('开始选课'):
+            page1.ele('#courseBtn').click()
+            page1.eles('.tab-first')[-1].click()
+            break
         else:
             print("验证码识别错误，请耐心等待")
             load()
@@ -229,8 +233,6 @@ class LoginFrame(wx.Frame):
         self.input_id   = wx.TextCtrl(panel, pos=(20, 50), size=(150, -1))
         self.label_pwd  = wx.StaticText(panel, label="密码", pos=(20, 85))
         self.input_pwd  = wx.TextCtrl(panel, pos=(20, 110), size=(150, -1), style=wx.TE_PASSWORD)
-        self.label3     = wx.StaticText(panel, label="帅哥", pos=(20, 145))
-        self.text_ctrl3 = wx.TextCtrl(panel, pos=(20, 170), size=(150, -1))
         self.label_batch= wx.StaticText(panel, label="批次", pos=(200, 25))
         self.input_batch= wx.TextCtrl(panel, pos=(200, 50), size=(70, -1))
         
@@ -297,8 +299,6 @@ class SecondFrame(wx.Frame):
         # self.list_box.SetSize((100, 50))    # 设置 ListBox 的大小
         self.label4     = wx.StaticText(panel, label="验证码可能识别错误，请耐心等待", pos=(30, 325))
         self.label4     = wx.StaticText(panel, label="如果显示账号密码不对，说明你之前输错了，请你关掉软件重新登陆", pos=(30, 340))
-        self.label4     = wx.StaticText(panel, label="如果这个软件真的帮你选到了那个你很喜欢的课，不妨请作者一杯奶茶", pos=(30, 355))
-        self.label4     = wx.StaticText(panel, label="zfb: 15650712188", pos=(30, 370))
 
         self.succ_info  = wx.StaticText(panel, label="当前抢课成果", pos=(365, 15))
         self.text_ctrl.SetPosition((365, 30))  # 设置 TextCtrl 的位置
@@ -337,10 +337,10 @@ class SecondFrame(wx.Frame):
         print("等待时间方法切换")
         with loop_lock:
             print("获取锁")
-            if pause_flag: print("切换到急速刷新模式，比较狂野ᕙ༼ຈ ͜ຈ༽ᕗ")
+            if pause_flag: print("切换到急速刷新模式")
             else: 
                 time.sleep(1)
-                print("切换到随机时间刷新模式，比较温柔(*´▽`*)❀")
+                print("切换到随机时间刷新模式")
                 pause_lowb = float(self.input_lowb.GetValue())
                 pause_upb  = float(self.input_upb.GetValue())
                 print(f"等待时间：{pause_lowb}秒-{pause_upb}秒")

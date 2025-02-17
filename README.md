@@ -1,5 +1,7 @@
 # NJU Epic Course Grabber
 
+# 2/17 紧急通知：作者的电脑坏了，所以打包好的windows程序现在暂时用不了，批次的bug在源码这里已经修复了，可以自己打包使用，或者等作者修好电脑后再打包发布。
+
 ## 简介
 
 NJU Epic Course Grabber 是一个自动选课工具，基于DrissionPage框架。这个基于Python的应用程序通过自动检测并选择收藏列表中有空位的课程，简化了选课流程。
@@ -30,9 +32,7 @@ fork作者留言：传奇抢课王在`NJU Course Selector`的基础上做了简�
 2. **安装依赖项**：通过运行以下命令，安装必要的依赖项，推荐创建一个新的anaconda虚拟环境：
 
     ```bash
-    pip install DrissionPage
-    pip install requests
-    pip install wxpython
+    pip install DrissionPage, requests, wxpython
     ```
 
 ## 使用
